@@ -6,25 +6,36 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class TrainingSkillService {
 
-  constructor(private prisma: PrismaService){}
+    constructor(private prisma: PrismaService){}
 
-  create(createTrainingSkillDto: CreateTrainingSkillDto) {
-    return 'This action adds a new trainingSkill';
-  }
+    async create(createTrainingSkillDto: CreateTrainingSkillDto) {
+        return await this.prisma.trainingSkill.create({
+        data: createTrainingSkillDto
+        })
+    }
 
-  findAll() {
-    return `This action returns all trainingSkill`;
-  }
+    async findAll() {
+        return await this.prisma.trainingSkill.findMany() 
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} trainingSkill`;
-  }
+    async findOne(id: string) {
+        return await this.prisma.trainingSkill.findUniqueOrThrow({
+        where: {id}
+        })
+    }
 
-  update(id: number, updateTrainingSkillDto: UpdateTrainingSkillDto) {
-    return `This action updates a #${id} trainingSkill`;
-  }
+    async update(id: string, updateTrainingSkillDto: UpdateTrainingSkillDto) {
+        return await this.prisma.trainingSkill.update({
+        where: {id},
+        data: {
+            ...updateTrainingSkillDto,
+        },
+        });
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} trainingSkill`;
-  }
+    async remove(id: string) {
+        await this.prisma.trainingSkill.delete({
+        where: {id},
+        });
+    }
 }

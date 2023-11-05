@@ -1,1 +1,3 @@
-export class CreateTrainingSkillDto {}
+export class CreateTrainingSkillDto {
+    description: string
+}
