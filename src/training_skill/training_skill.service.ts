@@ -10,7 +10,7 @@ export class TrainingSkillService {
 
     async create(createTrainingSkillDto: CreateTrainingSkillDto) {
         return await this.prisma.trainingSkill.create({
-        data: createTrainingSkillDto
+            data: {...createTrainingSkillDto}
         })
     }
 
@@ -27,9 +27,7 @@ export class TrainingSkillService {
     async update(id: string, updateTrainingSkillDto: UpdateTrainingSkillDto) {
         return await this.prisma.trainingSkill.update({
         where: {id},
-        data: {
-            ...updateTrainingSkillDto,
-        },
+        data: {...updateTrainingSkillDto},
         });
     }
 
