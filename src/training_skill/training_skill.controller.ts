@@ -1,41 +1,52 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { TrainingSkillService } from './training_skill.service';
-import { CreateTrainingSkillDto } from './dto/create-training_skill.dto';
-import { UpdateTrainingSkillDto } from './dto/update-training_skill.dto';
+import { CreateTrainingSkillDto } from './dto/create_training_skill.dto';
+import { UpdateTrainingSkillDto } from './dto/update_training_skill.dto';
+import { TrainingSkill } from './entities';
 
 @Controller('/api/v1/training-skill')
 export class TrainingSkillController {
   constructor(private readonly trainingSkillService: TrainingSkillService) {}
 
   @Delete('/truncate')
-  truncate() {
-    return this.trainingSkillService.truncate();
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async truncate(): Promise<void> {
+    // Clear all training skills.
+    await this.trainingSkillService.truncate();
   }
 
   @Post()
-  create(@Body() createTrainingSkillDto: CreateTrainingSkillDto) {
-    return this.trainingSkillService.create(createTrainingSkillDto);
+  async create(@Body() createTrainingSkillDto: CreateTrainingSkillDto): Promise<CreateTrainingSkillDto> {
+    // Create a new training skill and return it.
+    return await this.trainingSkillService.create(createTrainingSkillDto);
   }
 
   @Get()
-  findAll() {
-    return this.trainingSkillService.findAll();
+  async findAll(): Promise<TrainingSkill[]> {
+    // Retrieve and return a list of all training skills.
+    return await this.trainingSkillService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.trainingSkillService.findOne(id);
+  async findOne(@Param('id') id: string): Promise<TrainingSkill> {
+    // Retrieve a specific training skill by ID.
+    const trainingSkill = await this.trainingSkillService.findOne(id);
+    return trainingSkill;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTrainingSkillDto: UpdateTrainingSkillDto) {
-    return this.trainingSkillService.update(id, updateTrainingSkillDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateTrainingSkillDto: UpdateTrainingSkillDto
+  ): Promise<TrainingSkill> {
+    // Update a training skill and return the updated result.
+    const updatedSkill = await this.trainingSkillService.update(id, updateTrainingSkillDto);
+    return updatedSkill;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.trainingSkillService.remove(id);
+  async remove(@Param('id') id: string): Promise<void> {
+    // Remove a training skill by ID. It throws an exception if not found.
+    await this.trainingSkillService.remove(id);
   }
-
-
 }
