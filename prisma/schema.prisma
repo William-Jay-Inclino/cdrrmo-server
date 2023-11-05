@@ -15,4 +15,6 @@ model TrainingSkill {
   description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@map("training_skills")
 }
