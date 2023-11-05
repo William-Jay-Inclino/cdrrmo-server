@@ -4,7 +4,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { TrainingSkillModule } from './training_skill/training_skill.module';
-import { EmergencyModule } from './emergency/emergency.module';
 
 @Module({
   imports: [
@@ -12,7 +11,7 @@ import { EmergencyModule } from './emergency/emergency.module';
       isGlobal: true,
     }),
     PrismaModule, 
-    TrainingSkillModule, EmergencyModule,
+    TrainingSkillModule,
   ],
   controllers: [AppController],
   providers: [

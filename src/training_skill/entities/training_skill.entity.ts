@@ -1,5 +1,5 @@
 
-export interface TrainingSkill {
+export class TrainingSkill {
     id: string;
     name: string;
     description?: string | null;
@@ -7,5 +7,4 @@ export interface TrainingSkill {
     updatedAt: Date;
   }
   
-  export default TrainingSkill;
   
