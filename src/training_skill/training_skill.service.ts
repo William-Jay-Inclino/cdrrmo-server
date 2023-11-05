@@ -36,4 +36,8 @@ export class TrainingSkillService {
         where: {id},
         });
     }
+
+    async truncate() {
+        return await this.prisma.trainingSkill.deleteMany({});
+    }
 }

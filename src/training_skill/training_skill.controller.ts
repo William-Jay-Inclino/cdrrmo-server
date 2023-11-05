@@ -7,6 +7,11 @@ import { UpdateTrainingSkillDto } from './dto/update-training_skill.dto';
 export class TrainingSkillController {
   constructor(private readonly trainingSkillService: TrainingSkillService) {}
 
+  @Delete('/truncate')
+  truncate() {
+    return this.trainingSkillService.truncate();
+  }
+
   @Post()
   create(@Body() createTrainingSkillDto: CreateTrainingSkillDto) {
     return this.trainingSkillService.create(createTrainingSkillDto);
@@ -31,4 +36,6 @@ export class TrainingSkillController {
   remove(@Param('id') id: string) {
     return this.trainingSkillService.remove(id);
   }
+
+
 }
