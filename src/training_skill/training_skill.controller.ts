@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, UsePipes, ValidationPipe } from '@nestjs/common';
 import { TrainingSkillService } from './training_skill.service';
 import { CreateTrainingSkillDto } from './dto/create_training_skill.dto';
 import { UpdateTrainingSkillDto } from './dto/update_training_skill.dto';
-import { TrainingSkill } from './entities';
+import { TrainingSkill } from '@prisma/client';
 
 @Controller('/api/v1/training-skill')
 export class TrainingSkillController {
@@ -16,6 +16,7 @@ export class TrainingSkillController {
   }
 
   @Post()
+  @UsePipes(new ValidationPipe())
   async create(@Body() createTrainingSkillDto: CreateTrainingSkillDto): Promise<CreateTrainingSkillDto> {
     // Create a new training skill and return it.
     return await this.trainingSkillService.create(createTrainingSkillDto);
@@ -35,6 +36,7 @@ export class TrainingSkillController {
   }
 
   @Patch(':id')
+  @UsePipes(new ValidationPipe())
   async update(
     @Param('id') id: string,
     @Body() updateTrainingSkillDto: UpdateTrainingSkillDto

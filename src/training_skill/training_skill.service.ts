@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ConflictException, InternalServerErrorEx
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTrainingSkillDto } from './dto/create_training_skill.dto';
 import { UpdateTrainingSkillDto } from './dto/update_training_skill.dto';
+import { TrainingSkill } from '@prisma/client';
 
 @Injectable()
 export class TrainingSkillService {
@@ -38,10 +39,22 @@ export class TrainingSkillService {
     return trainingSkill;
   }
 
-  async update(id: string, updateTrainingSkillDto: UpdateTrainingSkillDto) {
+  async update(id: string, updateTrainingSkillDto: UpdateTrainingSkillDto): Promise<TrainingSkill> {
     const existingSkill = await this.findOne(id);
   
-    // If the record exists, proceed with the update
+    // Check if a skill with the same name already exists
+    const skillWithSameName = await this.prisma.trainingSkill.findFirst({
+      where: {
+        name: updateTrainingSkillDto.name,
+        id: { not: id }, // Exclude the current skill being updated
+      },
+    });
+  
+    if (skillWithSameName) {
+      throw new ConflictException('Training skill with the same data already exists.');
+    }
+  
+    // Continue with the update logic
     const updatedSkill = await this.prisma.trainingSkill.update({
       where: { id },
       data: { ...updateTrainingSkillDto },
