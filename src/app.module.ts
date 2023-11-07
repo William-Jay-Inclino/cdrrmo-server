@@ -7,6 +7,7 @@ import { TrainingSkillModule } from './training_skill/training_skill.module';
 import { EmergencyModule } from './emergency/emergency.module';
 import { BartModule } from './bart/bart.module';
 import { CsoModule } from './cso/cso.module';
+import { PoModule } from './po/po.module';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { CsoModule } from './cso/cso.module';
       isGlobal: true,
     }),
     PrismaModule, 
-    TrainingSkillModule, EmergencyModule, BartModule, CsoModule,
+    TrainingSkillModule, EmergencyModule, BartModule, CsoModule, PoModule,
   ],
   controllers: [AppController],
   providers: [

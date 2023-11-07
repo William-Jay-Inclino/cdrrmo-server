@@ -17,7 +17,7 @@ export class CsoService {
       if (error.code === 'P2002') {
         throw new ConflictException('CSO with the same data already exists.');
       } else {
-        throw new InternalServerErrorException('Failed to create a CSO.');
+        throw new InternalServerErrorException('Failed to create CSO.');
       }
     }
   }

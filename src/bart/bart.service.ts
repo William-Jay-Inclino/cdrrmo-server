@@ -17,7 +17,7 @@ export class BartService {
       if (error.code === 'P2002') {
         throw new ConflictException('BART with the same data already exists.');
       } else {
-        throw new InternalServerErrorException('Failed to create a BART.');
+        throw new InternalServerErrorException('Failed to create BART.');
       }
     }
   }
