@@ -5,10 +5,10 @@ import { PrismaService } from '../../src/prisma/prisma.service';
 import { AppModule } from '../../src/app.module';
 
 
-const apiEndpoint = '/api/v1/training-skill'
-const label = 'training skill'
+const apiEndpoint = '/api/v1/emergency'
+const label = 'emergency'
 
-describe.skip('TrainingSkillController (e2e)', () => {
+describe('EmergencyController (e2e)', () => {
   let app: INestApplication;
   let prismaService: PrismaService;
 
