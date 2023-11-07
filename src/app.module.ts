@@ -8,6 +8,7 @@ import { EmergencyModule } from './emergency/emergency.module';
 import { BartModule } from './bart/bart.module';
 import { CsoModule } from './cso/cso.module';
 import { PoModule } from './po/po.module';
+import { NaModule } from './na/na.module';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { PoModule } from './po/po.module';
       isGlobal: true,
     }),
     PrismaModule, 
-    TrainingSkillModule, EmergencyModule, BartModule, CsoModule, PoModule,
+    TrainingSkillModule, EmergencyModule, BartModule, CsoModule, PoModule, NaModule,
   ],
   controllers: [AppController],
   providers: [
