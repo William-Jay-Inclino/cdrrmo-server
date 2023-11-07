@@ -5,10 +5,10 @@ import { PrismaService } from '../../src/prisma/prisma.service';
 import { AppModule } from '../../src/app.module';
 
 
-const apiEndpoint = '/api/v1/emergency'
-const label = 'emergency'
+const apiEndpoint = '/api/v1/bart'
+const label = 'BART'
 
-describe('EmergencyController (e2e)', () => {
+describe('BartController (e2e)', () => {
   let app: INestApplication;
   let prismaService: PrismaService;
 

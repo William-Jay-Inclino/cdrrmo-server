@@ -8,7 +8,7 @@ import { AppModule } from '../../src/app.module';
 const apiEndpoint = '/api/v1/training-skill'
 const label = 'training skill'
 
-describe.skip('TrainingSkillController (e2e)', () => {
+describe('TrainingSkillController (e2e)', () => {
   let app: INestApplication;
   let prismaService: PrismaService;
 
@@ -20,6 +20,7 @@ describe.skip('TrainingSkillController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     prismaService = app.get(PrismaService);
     await app.init();
+
   });
 
   afterEach(async () => {

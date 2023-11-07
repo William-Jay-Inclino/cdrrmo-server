@@ -29,3 +29,46 @@ model Emergency {
 
   @@map("emergencies")
 }
+
+
+model Bart {
+  id          String   @id @default(uuid())
+  name        String @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("barts")
+}
+
+model Cso {
+  id          String   @id @default(uuid())
+  name        String @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("csos")
+}
+
+
+model Po {
+  id          String   @id @default(uuid())
+  name        String @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("pos")
+}
+
+
+model Na {
+  id          String   @id @default(uuid())
+  name        String @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("nas")
+}
