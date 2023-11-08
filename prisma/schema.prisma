@@ -10,51 +10,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum GenderEnum {
-  MALE
-  FEMALE
-}
+// enum GenderEnum {
+//   MALE
+//   FEMALE
+// }
 
-enum UserStatusEnum {
-  ACTIVE
-  INACTIVE
-}
+// enum UserStatusEnum {
+//   ACTIVE
+//   INACTIVE
+// }
 
-enum DispatchStatusEnum {
-  QUEUE
-  DISPATCHED
-  DECK
-}
+// enum DispatchStatusEnum {
+//   QUEUE
+//   DISPATCHED
+//   DECK
+// }
 
-enum UserLevelEnum {
-  ADMIN
-  DISPATCHER
-  TEAM_LEADER
-  FIELD_OPERATOR
-}
+// enum UserLevelEnum {
+//   ADMIN
+//   DISPATCHER
+//   TEAM_LEADER
+//   FIELD_OPERATOR
+// }
 
-enum UserTypeEnum {
-  LGU_Regular
-  LGU_Casual
-  LGU_Job_Order
-  ACDV_CSO
-  ACDV_PO
-  ACDV_BART
-  ACDV_INDIVIDUAL
-  National_Agency
-}
+// enum UserTypeEnum {
+//   LGU_Regular
+//   LGU_Casual
+//   LGU_Job_Order
+//   ACDV_CSO
+//   ACDV_PO
+//   ACDV_BART
+//   ACDV_INDIVIDUAL
+//   National_Agency
+// }
 
-enum TeamStatusEnum {
-  ACTIVE
-  DISPATCHED
-}
+// enum TeamStatusEnum {
+//   ACTIVE
+//   DISPATCHED
+// }
 
-enum SkillProficiencyEnum {
-  BASIC
-  INTERMEDIATE
-  ADVANCED
-  EXPERT
-}
+// enum SkillProficiencyEnum {
+//   BASIC
+//   INTERMEDIATE
+//   ADVANCED
+//   EXPERT
+// }
 
 model TrainingSkill {
   id          String  @id @default(uuid())
@@ -123,20 +123,20 @@ model Na {
 }
 
 model User {
-  id              String             @id @default(uuid())
-  user_name       String             @unique
-  user_level      UserLevelEnum
+  id              String   @id @default(uuid())
+  user_name       String   @unique
+  user_level      Int
   password_hash   String
   last_name       String
   first_name      String
-  gender          GenderEnum
+  gender          Int
   address         String
   birth_date      DateTime
   contact_no      String
   blood_type      String
-  status          UserStatusEnum
-  dispatch_status DispatchStatusEnum
-  type            UserTypeEnum
+  status          Int
+  dispatch_status Int?
+  type            Int
   bart_id         String?
   cso_id          String?
   po_id           String?
@@ -159,11 +159,11 @@ model User {
 }
 
 model Team {
-  id             String         @id @default(uuid())
-  team_leader    User           @relation("TeamLeader", fields: [team_leader_id], references: [id], onDelete: Cascade)
-  team_leader_id String         @unique
-  name           String         @unique
-  status         TeamStatusEnum
+  id             String @id @default(uuid())
+  team_leader    User   @relation("TeamLeader", fields: [team_leader_id], references: [id], onDelete: Cascade)
+  team_leader_id String @unique
+  name           String @unique
+  status         Int
 
   // Define a one-to-many relationship with TeamMembers
   teamMembers TeamMember[]
@@ -188,12 +188,12 @@ model TeamMember {
 }
 
 model UserSkill {
-  id                String               @id @default(uuid())
-  user              User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id                String        @id @default(uuid())
+  user              User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id           String
-  TrainingSkill     TrainingSkill        @relation(fields: [training_skill_id], references: [id], onDelete: Cascade)
+  TrainingSkill     TrainingSkill @relation(fields: [training_skill_id], references: [id], onDelete: Cascade)
   training_skill_id String
-  proficiency       SkillProficiencyEnum // You can define an enum for skill proficiency levels if needed
+  proficiency       Int // You can define an enum for skill proficiency levels if needed
 
   created_at       DateTime           @default(now())
   updated_at       DateTime           @updatedAt

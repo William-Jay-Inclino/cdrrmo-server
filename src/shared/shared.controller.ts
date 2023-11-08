@@ -33,18 +33,18 @@ export class SharedController {
     // seed per table
     @Post('/seed-table')
     @UsePipes(new ValidationPipe())
-    @HttpCode(HttpStatus.OK)
     async seedTable(@Body() tableSeederDto: TableSeederDto) {
       try {
+            if(tableSeederDto.tbl_name === TableEnum.TRAINING_SKILL){
+                return await this.sharedService.seedTrainingSkillTbl();
+            }
+            if(tableSeederDto.tbl_name === TableEnum.USER){
+                return await this.sharedService.seedUserTbl();
+            }
 
-        if(tableSeederDto.tbl_name === TableEnum.TRAINING_SKILL){
-            await this.sharedService.seedTrainingSkillTbl();
+        } catch (error) {
+            return 'Table seeding failed.';
         }
-
-        return 'Table seeding successful.';
-      } catch (error) {
-        return 'Table seeding failed.';
-      }
     }
     
 }
