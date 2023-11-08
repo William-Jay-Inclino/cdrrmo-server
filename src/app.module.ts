@@ -10,6 +10,7 @@ import { CsoModule } from './cso/cso.module';
 import { PoModule } from './po/po.module';
 import { NaModule } from './na/na.module';
 import { UserModule } from './user/user.module';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
   imports: [
@@ -17,7 +18,13 @@ import { UserModule } from './user/user.module';
       isGlobal: true,
     }),
     PrismaModule, 
-    TrainingSkillModule, EmergencyModule, BartModule, CsoModule, PoModule, NaModule, UserModule,
+    TrainingSkillModule, 
+    EmergencyModule, 
+    BartModule, 
+    CsoModule, 
+    PoModule, 
+    NaModule, 
+    UserModule, SharedModule,
   ],
   controllers: [AppController],
   providers: [
