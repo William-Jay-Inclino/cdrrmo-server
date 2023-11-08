@@ -160,7 +160,7 @@ model User {
 
 model Team {
   id             String         @id @default(uuid())
-  team_leader    User           @relation("TeamLeader", fields: [team_leader_id], references: [id])
+  team_leader    User           @relation("TeamLeader", fields: [team_leader_id], references: [id], onDelete: Cascade)
   team_leader_id String         @unique
   name           String         @unique
   status         TeamStatusEnum
@@ -176,9 +176,9 @@ model Team {
 
 model TeamMember {
   id        String @id @default(uuid())
-  team      Team   @relation(fields: [team_id], references: [id])
+  team      Team   @relation(fields: [team_id], references: [id], onDelete: Cascade)
   team_id   String
-  member    User   @relation(fields: [member_id], references: [id])
+  member    User   @relation(fields: [member_id], references: [id], onDelete: Cascade)
   member_id String
 
   created_at DateTime @default(now())
@@ -189,9 +189,9 @@ model TeamMember {
 
 model UserSkill {
   id                String               @id @default(uuid())
-  user              User                 @relation(fields: [user_id], references: [id])
+  user              User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id           String
-  TrainingSkill     TrainingSkill        @relation(fields: [training_skill_id], references: [id])
+  TrainingSkill     TrainingSkill        @relation(fields: [training_skill_id], references: [id], onDelete: Cascade)
   training_skill_id String
   proficiency       SkillProficiencyEnum // You can define an enum for skill proficiency levels if needed
 
@@ -202,7 +202,7 @@ model UserSkill {
 
 model SkillCertificate {
   id             String    @id @default(uuid())
-  userSkill      UserSkill @relation(fields: [user_skill_id], references: [id])
+  userSkill      UserSkill @relation(fields: [user_skill_id], references: [id], onDelete: Cascade)
   user_skill_id  String
   certificateUrl String // You can store the URL or information about the certificate
 
