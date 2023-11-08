@@ -56,6 +56,18 @@ enum SkillProficiencyEnum {
   EXPERT
 }
 
+model TrainingSkill {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String?
+
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  UserSkill  UserSkill[]
+
+  @@map("training_skills")
+}
+
 model Emergency {
   id          String   @id @default(uuid())
   name        String   @unique
@@ -186,18 +198,6 @@ model UserSkill {
   created_at       DateTime           @default(now())
   updated_at       DateTime           @updatedAt
   SkillCertificate SkillCertificate[]
-}
-
-model TrainingSkill {
-  id          String  @id @default(uuid())
-  name        String  @unique
-  description String?
-
-  created_at DateTime    @default(now())
-  updated_at DateTime    @updatedAt
-  UserSkill  UserSkill[]
-
-  @@map("training_skills")
 }
 
 model SkillCertificate {

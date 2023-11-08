@@ -15,6 +15,7 @@ export class PrismaService extends PrismaClient {
     }
 
     cleanDb() {
+        console.log('truncating db...')
         return this.$transaction([
           this.trainingSkill.deleteMany(),
           this.emergency.deleteMany(),
