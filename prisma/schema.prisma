@@ -193,11 +193,12 @@ model UserSkill {
   user_id           String
   TrainingSkill     TrainingSkill @relation(fields: [training_skill_id], references: [id], onDelete: Cascade)
   training_skill_id String
-  proficiency       Int // You can define an enum for skill proficiency levels if needed
 
   created_at       DateTime           @default(now())
   updated_at       DateTime           @updatedAt
   SkillCertificate SkillCertificate[]
+
+  @@map("user_skills")
 }
 
 model SkillCertificate {
@@ -208,4 +209,6 @@ model SkillCertificate {
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  @@map("skill_certificates")
 }

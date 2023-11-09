@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as mockData from './mock-data';
 import { Bart, Cso, Emergency, Na, Po, SkillCertificate, Team, TeamMember, TrainingSkill, User, UserSkill } from '@prisma/client';
-import { faker } from '@faker-js/faker';
+import { DatabaseModule, faker } from '@faker-js/faker';
 import { GenderEnum, TeamStatusEnum, UserLevelEnum, UserStatusEnum, UserTypeEnum } from './entities';
 @Injectable()
 export class SharedService {
@@ -231,6 +231,27 @@ export class SharedService {
             UserTypeEnum.NA,
         ]
 
+        let csos = this.csos
+        let pos = this.pos 
+        let barts = this.barts 
+        let nas = this.nas
+
+        if(csos.length === 0){
+            csos = await this.seedCsoTbl()
+        }
+
+        if(pos.length === 0){
+            pos = await this.seedPoTbl()
+        }
+
+        if(barts.length === 0){
+            barts = await this.seedBartTbl()
+        }
+
+        if(nas.length === 0){
+            nas = await this.seedNaTbl()
+        }
+
         for(let i = 1; i <= count; i++){
 
             const data = {} as User
@@ -248,51 +269,19 @@ export class SharedService {
             data.type = userTypeValues[Math.floor(Math.random() * userTypeValues.length)]
             
             if(data.type === UserTypeEnum.ACDV_BART){
-                
-                if(this.barts.length > 0){
-                    const indx = Math.floor(Math.random() * this.barts.length);
-                    data.bart_id = this.barts[indx].id
-                }else{
-                    const barts = await this.seedBartTbl()
-                    const indx = Math.floor(Math.random() * barts.length);
-                    data.bart_id = barts[indx].id
-                }
-
+                data.bart_id = barts[Math.floor(Math.random() * barts.length)].id
             }
 
             else if(data.type === UserTypeEnum.ACDV_CSO){
-                
-                if(this.csos.length > 0){
-                    const indx = Math.floor(Math.random() * this.csos.length);
-                    data.cso_id = this.csos[indx].id
-                }else{
-                    const csos = await this.seedCsoTbl()
-                    const indx = Math.floor(Math.random() * csos.length);
-                    data.cso_id = csos[indx].id
-                }
-
+                data.cso_id = csos[Math.floor(Math.random() * csos.length)].id
             }
 
-            else if(data.type === UserTypeEnum.ACDV_PO){
-                if(this.pos.length > 0){
-                    const indx = Math.floor(Math.random() * this.pos.length);
-                    data.po_id = this.pos[indx].id
-                }else{
-                    const pos = await this.seedPoTbl()
-                    const indx = Math.floor(Math.random() * pos.length);
-                    data.po_id = pos[indx].id
-                }
+            if(data.type === UserTypeEnum.ACDV_PO){
+                data.po_id = pos[Math.floor(Math.random() * pos.length)].id
             }
 
-            else if(data.type === UserTypeEnum.NA){
-                if(this.nas.length > 0){
-                    const indx = Math.floor(Math.random() * this.nas.length);
-                    data.na_id = this.nas[indx].id
-                }else{
-                    const nas = await this.seedNaTbl()
-                    const indx = Math.floor(Math.random() * nas.length);
-                    data.na_id = nas[indx].id
-                }
+            if(data.type === UserTypeEnum.NA){
+                data.na_id = nas[Math.floor(Math.random() * nas.length)].id
             }
 
             const fn = data.first_name.toLowerCase().replace(/\s/g, "")
@@ -426,10 +415,66 @@ export class SharedService {
         return seedData
     } 
 
-    async seedUserSkillTbl(): Promise<UserSkill[]>{
+    async seedUserSkillTbl(countSkill = 2): Promise<UserSkill[]>{
         console.log('seeding user skill table...')
+        await this.prisma.userSkill.deleteMany({})
 
-        return []
+        const seedData: UserSkill[] = []
+
+        let users = this.users 
+
+        if(users.length === 0){
+            users = await this.seedUserTbl()
+        }
+
+        let trainingSkills = this.trainingSkills
+
+        if(trainingSkills.length === 0){
+            trainingSkills = await this.seedTrainingSkillTbl()
+        }
+
+        // countSkill is the number of skill per user
+        for(let i = 1; i <= countSkill; i++){
+
+            for(let user of users){
+                
+                const data = {} as UserSkill
+                data.id = faker.string.uuid()
+                data.user_id = user.id
+
+                let limit = 10
+                while(true){
+
+                    if(limit === 0) break // avoid infinite loop
+
+                    // random skill should be unique per user
+                    const randomSkillId = trainingSkills[Math.floor(Math.random() * trainingSkills.length)].id
+                    const isExistSkill = seedData.find(j => j.user_id === user.id && j.training_skill_id === randomSkillId)
+    
+                    if(!isExistSkill){
+                        data.training_skill_id = randomSkillId
+                        break
+                    }
+
+                    limit--
+                }
+
+                data.created_at = new Date() 
+                data.updated_at = new Date() 
+                
+                seedData.push(data)
+            }
+
+        }
+
+        console.log('seedData', seedData)
+
+        await this.prisma.userSkill.createMany({
+            data: seedData,
+        });
+
+        return seedData
+
     } 
 
     async seedSkillCertificateTbl(): Promise<SkillCertificate[]>{
