@@ -11,6 +11,7 @@ import { PoModule } from './po/po.module';
 import { NaModule } from './na/na.module';
 import { UserModule } from './user/user.module';
 import { SharedModule } from './shared/shared.module';
+import { SeederModule } from './prisma/seeder/seeder.module';
 
 @Module({
   imports: [
@@ -24,7 +25,9 @@ import { SharedModule } from './shared/shared.module';
     CsoModule, 
     PoModule, 
     NaModule, 
-    UserModule, SharedModule,
+    UserModule, 
+    SharedModule,
+    SeederModule,
   ],
   controllers: [AppController],
   providers: [
