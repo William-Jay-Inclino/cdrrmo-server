@@ -3,8 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as mockData from './mock-data';
 import { Bart, Cso, Emergency, Na, Po, SkillCertificate, Team, TeamMember, TrainingSkill, User, UserSkill } from '@prisma/client';
 import { faker } from '@faker-js/faker';
-import { GenderEnum, UserLevelEnum, UserStatusEnum, UserTypeEnum } from './entities';
-
+import { GenderEnum, TeamStatusEnum, UserLevelEnum, UserStatusEnum, UserTypeEnum } from './entities';
 @Injectable()
 export class SharedService {
 
@@ -28,20 +27,23 @@ export class SharedService {
    */
     async seedData(){
         console.log('Seeding data...')
-        await this.seedTrainingSkillTbl()
-        await this.seedEmergencyTbl()
-        await this.seedBartTbl()
-        await this.seedCsoTbl()
-        await this.seedPoTbl()
-        await this.seedNaTbl()
-        await this.seedUserTbl()
-        await this.seedTeamTbl()
-        await this.seedTeamMemberTbl()
-        await this.seedUserSkillTbl()
-        await this.seedSkillCertificateTbl()
+        this.trainingSkills = await this.seedTrainingSkillTbl()
+        this.emergencies = await this.seedEmergencyTbl()
+        this.barts = await this.seedBartTbl()
+        this.csos = await this.seedCsoTbl()
+        this.pos = await this.seedPoTbl()
+        this.nas = await this.seedNaTbl()
+        this.users = await this.seedUserTbl()
+        this.teams = await this.seedTeamTbl()
+        this.teamMembers = await this.seedTeamMemberTbl()
+        this.userSkills = await this.seedUserSkillTbl()
+        this.skillCertificates = await this.seedSkillCertificateTbl()
     }
 
     async seedTrainingSkillTbl(): Promise<TrainingSkill[]>{
+
+        console.log('seeding training skill table...')
+
         await this.prisma.trainingSkill.deleteMany({})
 
         const seedData: TrainingSkill[] = []
@@ -61,12 +63,13 @@ export class SharedService {
             data: seedData,
         });
         
-        this.trainingSkills = seedData
-
         return seedData
     }
 
     async seedEmergencyTbl(): Promise<Emergency[]>{
+
+        console.log('seeding emergency table...')
+
         await this.prisma.emergency.deleteMany({})
 
         const seedData: Emergency[] = []
@@ -86,13 +89,14 @@ export class SharedService {
             data: seedData,
         });
         
-        this.emergencies = seedData 
-
         return seedData
 
     }
 
     async seedBartTbl(): Promise<Bart[]>{
+
+        console.log('seeding bart table...')
+        
         await this.prisma.bart.deleteMany({})
 
         const seedData: Bart[] = []
@@ -112,13 +116,12 @@ export class SharedService {
             data: seedData,
         });
 
-        this.barts = seedData
-
         return seedData
       
     }
 
     async seedCsoTbl(): Promise<Cso[]>{
+        console.log('seeding cso table...')
         await this.prisma.cso.deleteMany({})
 
         const seedData: Cso[] = []
@@ -138,11 +141,11 @@ export class SharedService {
             data: seedData,
         });
         
-        this.csos = seedData
         return seedData
     }
 
     async seedPoTbl(): Promise<Po[]>{
+        console.log('seeding po table...')
         await this.prisma.po.deleteMany({})
 
         const seedData: Po[] = []
@@ -162,12 +165,12 @@ export class SharedService {
             data: seedData,
         });
 
-        this.pos = seedData
         return seedData
 
     }
 
     async seedNaTbl(): Promise<Na[]>{
+        console.log('seeding na table...')
         await this.prisma.na.deleteMany({})
 
         const seedData: Na[] = []
@@ -187,11 +190,12 @@ export class SharedService {
             data: seedData,
         });
         
-        this.nas = seedData
         return seedData
     }
 
     async seedUserTbl(count = 10): Promise<User[]> {
+
+        console.log('seeding user table...')
 
         await this.prisma.user.deleteMany({})
 
@@ -244,7 +248,6 @@ export class SharedService {
             data.type = userTypeValues[Math.floor(Math.random() * userTypeValues.length)]
             
             if(data.type === UserTypeEnum.ACDV_BART){
-                console.log('UserTypeEnum.ACDV_BART')
                 
                 if(this.barts.length > 0){
                     const indx = Math.floor(Math.random() * this.barts.length);
@@ -258,7 +261,6 @@ export class SharedService {
             }
 
             else if(data.type === UserTypeEnum.ACDV_CSO){
-                console.log('UserTypeEnum.ACDV_CSO')
                 
                 if(this.csos.length > 0){
                     const indx = Math.floor(Math.random() * this.csos.length);
@@ -272,7 +274,6 @@ export class SharedService {
             }
 
             else if(data.type === UserTypeEnum.ACDV_PO){
-                console.log('UserTypeEnum.ACDV_PO')
                 if(this.pos.length > 0){
                     const indx = Math.floor(Math.random() * this.pos.length);
                     data.po_id = this.pos[indx].id
@@ -284,7 +285,6 @@ export class SharedService {
             }
 
             else if(data.type === UserTypeEnum.NA){
-                console.log('UserTypeEnum.NA')
                 if(this.nas.length > 0){
                     const indx = Math.floor(Math.random() * this.nas.length);
                     data.na_id = this.nas[indx].id
@@ -295,13 +295,14 @@ export class SharedService {
                 }
             }
 
-            data.user_name = '' // tba
-            data.password_hash = '' // tba
+            const fn = data.first_name.toLowerCase().replace(/\s/g, "")
+            const ln = data.last_name.toLowerCase().replace(/\s/g, "")
+
+            data.user_name = fn + ln  + faker.number.int({min: 10, max: 100}).toString()
+            data.password_hash = faker.internet.password()
 
             data.created_at = new Date()
             data.updated_at = new Date()
-
-            console.log({data})
 
             seedData.push(data)
 
@@ -311,29 +312,133 @@ export class SharedService {
             data: seedData,
         });
 
-        this.users = seedData
-
         return seedData
 
     } 
 
     async seedTeamTbl(){
-        console.log('seedTeamTbl()')
+        console.log('seeding team table...')
+
+        await this.prisma.team.deleteMany({})
+
+        const seedData: Team[] = []
+
+        for(let i of mockData.teams){
+            const data = {} as Team 
+            data.id = faker.string.uuid()
+            data.name = i 
+            data.status = TeamStatusEnum.ACTIVE
+            
+            if(this.users.length > 0){
+                data.team_leader_id = this.users[Math.floor(Math.random() * this.users.length)].id
+            }else{
+                const users = await this.seedUserTbl()
+                const indx = Math.floor(Math.random() * users.length);
+                data.team_leader_id = users[indx].id
+            }
+
+            data.created_at = new Date()
+            data.updated_at = new Date()
+
+            seedData.push(data)
+        }
+
+        await this.prisma.team.createMany({
+            data: seedData,
+        });
+
+        return seedData
+
     } 
 
-    async seedTeamMemberTbl(){
-        console.log('seedTeamMemberTbl()')
+    async seedTeamMemberTbl(): Promise<TeamMember[]>{
+        console.log('seeding team member table...')
+
+        await this.prisma.teamMember.deleteMany({})
+
+        const seedData: TeamMember[] = []
+
+        let users = this.users 
+
+        if(users.length === 0){
+            users = await this.seedUserTbl()
+        }
+
+
+        for(let user of users){
+
+            const userIsATeamLeader = await this.prisma.team.findUnique({
+                where: {team_leader_id: user.id},
+                include: {
+                    team_leader: true,
+                    teamMembers: true,
+                }
+            })
+
+            if(userIsATeamLeader){
+                console.log(userIsATeamLeader)
+                console.log('user is a team leader. Not added as a member')
+                continue 
+            }
+
+            const userHasTeam = await this.prisma.teamMember.findUnique(
+                {
+                    where: {member_id: user.id},
+                    include: {
+                        team: true,
+                        member: true,
+                    }
+                }
+            )
+
+            if(userHasTeam){
+                console.log('user has a team. Not added as a member')
+                console.log(userHasTeam)
+                continue
+            }
+
+            const data = {} as TeamMember
+
+            data.id = faker.string.uuid()
+            data.member_id = user.id
+            
+            let teams = this.teams 
+
+            if(teams.length === 0){
+                teams = await this.seedTeamTbl()
+            }
+
+            data.team_id = teams[Math.floor(Math.random() * teams.length)].id
+            data.created_at = new Date()
+            data.updated_at = new Date()
+
+            console.log(data)
+
+            console.log('User is added as member')
+
+            seedData.push(data)
+        }
+
+        await this.prisma.teamMember.createMany({
+            data: seedData,
+        });
+
+        return seedData
     } 
 
-    async seedUserSkillTbl(){
-        console.log('seedUserSkillTbl()')
+    async seedUserSkillTbl(): Promise<UserSkill[]>{
+        console.log('seeding user skill table...')
+
+        return []
     } 
 
-    async seedSkillCertificateTbl(){
-        console.log('seedSkillCertificateTbl()')
+    async seedSkillCertificateTbl(): Promise<SkillCertificate[]>{
+        console.log('seeding skill certificate table...')
+        return []
     } 
 
     async truncateDb(){
+        console.log('truncating db...')
         await this.prisma.cleanDb()
     }
 

@@ -22,7 +22,17 @@ export class UserService {
   // }
 
   async findAll() {
-    return await this.prisma.user.findMany();
+    return await this.prisma.user.findMany({
+      include: {
+        Bart: true, 
+        Cso: true,  
+        Po: true,  
+        Na: true,  
+        teamMembers: true, 
+        teamLeader: true,  
+        skills: true     
+      }
+    });
   }
 
   // async findOne(id: string) {
