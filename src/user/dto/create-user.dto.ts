@@ -1,7 +1,8 @@
 import { DispatchStatusEnum, GenderEnum, UserLevelEnum, UserStatusEnum, UserTypeEnum } from '../../shared/entities';
 import { IsEnum, IsString, IsDate, IsOptional, IsNotEmpty, Length, IsArray, Validate } from 'class-validator';
-import { UserSkillDto } from './index'
+import { UserSkillDto } from './user-skill.dto'
 import { IsValidUserSkillDtoArray } from '../validators/IsValidUserSkillDtoArray';
+import { Transform } from 'class-transformer';
 
 export class CreateUserDto {
     @IsEnum(UserLevelEnum)
@@ -25,6 +26,7 @@ export class CreateUserDto {
     @IsString()
     address: string;
 
+    @Transform(({ value }) => new Date(value))
     @IsDate()
     birth_date: Date;
 
@@ -40,8 +42,9 @@ export class CreateUserDto {
     @IsEnum(UserStatusEnum)
     status: UserStatusEnum;
 
+    @IsOptional()
     @IsEnum(DispatchStatusEnum)
-    dispatch_status: DispatchStatusEnum;
+    dispatch_status?: DispatchStatusEnum;
 
     @IsEnum(UserTypeEnum)
     type: UserTypeEnum;

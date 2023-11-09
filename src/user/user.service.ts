@@ -10,38 +10,35 @@ export class UserService {
 
 	async create(createUserDto: CreateUserDto) {
 		try {
-			const userData = this.mapUserDtoToPrismaData(createUserDto);
-			const user = await this.prisma.user.create({ data: userData });
+			console.log('createUserDto', createUserDto)
+			const { skills, ...userData } = createUserDto;
+
+			console.log('skills', skills)
+			console.log('userData', userData) 
+			// const user = await this.prisma.user.create({ data: userData as User });
 		
-			if (createUserDto.skills && createUserDto.skills.length > 0) {
-				await this.createAndAssociateUserSkills(user.id, createUserDto.skills);
-			}
+			// if (createUserDto.skills && createUserDto.skills.length > 0) {
+			// 	await this.prisma.userSkill.createMany({
+			// 		data: skills,
+			// 	});
+			// }
 		
-			return user;
+			// return user;
 			} catch (error) {
 			// Handle any errors, log them, and potentially return a meaningful error response
 			throw new Error(`Failed to create user: ${error.message}`);
 		}
 	}
 	
-	private mapUserDtoToPrismaData(createUserDto: CreateUserDto): User {
-		const { skills, ...userData } = createUserDto;
-		return userData as User;
-	}
-	
 	private async createAndAssociateUserSkills(userId: string, skillDtos: UserSkillDto[]) {
 		const skillDataArray = skillDtos.map((skillDto) => ({
-		  ...this.mapUserSkillDtoToPrismaData(skillDto),
+		  ...skillDto,
 		  user_id: userId,
 		}));
 	  
 		await this.prisma.userSkill.createMany({
 		  data: skillDataArray,
 		});
-	}
-	
-	private mapUserSkillDtoToPrismaData(skillDto: UserSkillDto) {
-		return skillDto;
 	}
 
 	async findAll() {
