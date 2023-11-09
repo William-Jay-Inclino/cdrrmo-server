@@ -198,6 +198,7 @@ model UserSkill {
   updated_at       DateTime           @updatedAt
   SkillCertificate SkillCertificate[]
 
+  @@unique([user_id, training_skill_id], name: "unique_user_skill")
   @@map("user_skills")
 }
 

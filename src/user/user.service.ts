@@ -1,86 +1,60 @@
 import { Injectable, NotFoundException, ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-// import { CreateUserDto } from './dto/create-user.dto';
-// import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '@prisma/client';
+import { UserSkillDto } from './dto';
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+	constructor(private readonly prisma: PrismaService) {}
 
-  // async create(createBartDto: CreateBartDto) {
-  //   try {
-  //     return await this.prisma.bart.create({
-  //       data: { ...createBartDto },
-  //     });
-  //   } catch (error) {
-  //     if (error.code === 'P2002') {
-  //       throw new ConflictException('BART with the same data already exists.');
-  //     } else {
-  //       throw new InternalServerErrorException('Failed to create BART.');
-  //     }
-  //   }
-  // }
+	async create(createUserDto: CreateUserDto) {
+		try {
+			const userData = this.mapUserDtoToPrismaData(createUserDto);
+			const user = await this.prisma.user.create({ data: userData });
+		
+			if (createUserDto.skills && createUserDto.skills.length > 0) {
+				await this.createAndAssociateUserSkills(user.id, createUserDto.skills);
+			}
+		
+			return user;
+			} catch (error) {
+			// Handle any errors, log them, and potentially return a meaningful error response
+			throw new Error(`Failed to create user: ${error.message}`);
+		}
+	}
+	
+	private mapUserDtoToPrismaData(createUserDto: CreateUserDto): User {
+		const { skills, ...userData } = createUserDto;
+		return userData as User;
+	}
+	
+	private async createAndAssociateUserSkills(userId: string, skillDtos: UserSkillDto[]) {
+		const skillDataArray = skillDtos.map((skillDto) => ({
+		  ...this.mapUserSkillDtoToPrismaData(skillDto),
+		  user_id: userId,
+		}));
+	  
+		await this.prisma.userSkill.createMany({
+		  data: skillDataArray,
+		});
+	}
+	
+	private mapUserSkillDtoToPrismaData(skillDto: UserSkillDto) {
+		return skillDto;
+	}
 
-  async findAll() {
-    return await this.prisma.user.findMany({
-      include: {
-        Bart: true, 
-        Cso: true,  
-        Po: true,  
-        Na: true,  
-        teamMembers: true, 
-        teamLeader: true,  
-        skills: true     
-      }
-    });
-  }
-
-  // async findOne(id: string) {
-  //   const bart = await this.prisma.bart.findUnique({
-  //     where: { id },
-  //   });
-
-  //   if (!bart) {
-  //     throw new NotFoundException('BART not found.');
-  //   }
-
-  //   return bart;
-  // }
-
-  // async update(id: string, updateBartDto: UpdateBartDto): Promise<Bart> {
-  //   const existingBart = await this.findOne(id);
-  
-  //   const bartWithSameName = await this.prisma.bart.findFirst({
-  //     where: {
-  //       name: updateBartDto.name,
-  //       id: { not: id }, 
-  //     },
-  //   });
-  
-  //   if (bartWithSameName) {
-  //     throw new ConflictException('BART with the same data already exists.');
-  //   }
-  
-  //   // Continue with the update logic
-  //   const updatedBart = await this.prisma.bart.update({
-  //     where: { id },
-  //     data: { ...updateBartDto },
-  //   });
-  
-  //   return updatedBart;
-  // }
-  
-  // async remove(id: string) {
-  //   const existingBart = await this.findOne(id);
-  
-  //   await this.prisma.bart.delete({
-  //     where: { id },
-  //   });
-  
-  //   return true;
-  // }
-
-  // async truncate() {
-  //   return await this.prisma.bart.deleteMany({});
-  // }
+	async findAll() {
+		return await this.prisma.user.findMany({
+		include: {
+			Bart: true, 
+			Cso: true,  
+			Po: true,  
+			Na: true,  
+			teamMembers: true, 
+			teamLeader: true,  
+			skills: true     
+		}
+		});
+	}
 }
