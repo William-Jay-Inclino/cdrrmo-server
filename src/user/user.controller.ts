@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto';
 
@@ -6,13 +6,19 @@ import { CreateUserDto } from './dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
+    @Delete('/truncate')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async truncate(): Promise<void> {
+        await this.userService.truncate();
+    }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
+    @Post()
+    create(@Body() createUserDto: CreateUserDto) {
+        return this.userService.create(createUserDto);
+    }
+
+    @Get()
+    findAll() {
+        return this.userService.findAll();
+    }
 }

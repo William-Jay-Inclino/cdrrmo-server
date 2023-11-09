@@ -12,7 +12,7 @@ export class IsValidUserSkillDtoArray implements ValidatorConstraintInterface {
     // }
 
     // Define the required properties for UserSkillDto
-    const requiredProperties = ['user_id', 'training_skill_id'];
+    const requiredProperties = ['training_skill_id'];
 
     // Check if every item in the array is an instance of UserSkillDto
     const allItemsValid = value.every((item) => this.isInstanceOfUserSkillDto(item, requiredProperties));
