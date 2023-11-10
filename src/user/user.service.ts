@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ConflictException, InternalServerErrorEx
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Prisma, TrainingSkill, User, UserSkill } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { faker } from '@faker-js/faker';
 
@@ -10,6 +10,10 @@ import { faker } from '@faker-js/faker';
 export class UserService {
 	constructor(private readonly prisma: PrismaService) {}
 
+
+	// this will auto generate a user name and password
+	// password is hash using bcrypt
+	// send user name and password via email and/or sms ?
 	async create(createUserDto: CreateUserDto): Promise<User> {
 		try {
 
@@ -202,6 +206,10 @@ export class UserService {
 		return true;
 	}
 
+	async truncate() {
+		return await this.prisma.user.deleteMany({});
+	}
+
 	private generateUniqueUserName(firstName: string, lastName: string): string {
 		const randomSuffix = Math.floor(Math.random() * 10000); // Generate a random number
 		return `${firstName.toLowerCase()}.${lastName.toLowerCase()}${randomSuffix}`;
@@ -227,10 +235,5 @@ export class UserService {
 	  
 		return existingSkills.length === skillIds.length;
 	}
-
-	async truncate() {
-		return await this.prisma.user.deleteMany({});
-	}
-	  
 
 }
