@@ -10,22 +10,206 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// enum GenderEnum {
+//   MALE
+//   FEMALE
+// }
+
+// enum UserStatusEnum {
+//   ACTIVE
+//   INACTIVE
+// }
+
+// enum DispatchStatusEnum {
+//   QUEUE
+//   DISPATCHED
+//   DECK
+// }
+
+// enum UserLevelEnum {
+//   ADMIN
+//   DISPATCHER
+//   TEAM_LEADER
+//   FIELD_OPERATOR
+// }
+
+// enum UserTypeEnum {
+//   LGU_Regular
+//   LGU_Casual
+//   LGU_Job_Order
+//   ACDV_CSO
+//   ACDV_PO
+//   ACDV_BART
+//   ACDV_INDIVIDUAL
+//   National_Agency
+// }
+
+// enum TeamStatusEnum {
+//   ACTIVE
+//   DISPATCHED
+// }
+
+// enum SkillProficiencyEnum {
+//   BASIC
+//   INTERMEDIATE
+//   ADVANCED
+//   EXPERT
+// }
+
 model TrainingSkill {
-  id          String   @id @default(uuid())
-  name        String @unique
+  id          String  @id @default(uuid())
+  name        String  @unique
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  UserSkill  UserSkill[]
 
   @@map("training_skills")
 }
 
 model Emergency {
   id          String   @id @default(uuid())
-  name        String @unique
+  name        String   @unique
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 
   @@map("emergencies")
+}
+
+model Bart {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  User        User[]
+
+  @@map("barts")
+}
+
+model Cso {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  User        User[]
+
+  @@map("csos")
+}
+
+model Po {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  User        User[]
+
+  @@map("pos")
+}
+
+model Na {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  User        User[]
+
+  @@map("nas")
+}
+
+model User {
+  id              String   @id @default(uuid())
+  user_name       String   @unique
+  user_level      Int
+  password_hash   String
+  last_name       String
+  first_name      String
+  gender          Int
+  address         String
+  birth_date      DateTime
+  contact_no      String
+  blood_type      String
+  status          Int
+  dispatch_status Int?
+  type            Int
+  bart_id         String?
+  cso_id          String?
+  po_id           String?
+  na_id           String?
+
+  Bart Bart? @relation(fields: [bart_id], references: [id])
+  Cso  Cso?  @relation(fields: [cso_id], references: [id])
+  Po   Po?   @relation(fields: [po_id], references: [id])
+  Na   Na?   @relation(fields: [na_id], references: [id])
+
+  teamMembers TeamMember[]
+  teamLeader  Team?        @relation("TeamLeader")
+  skills      UserSkill[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([first_name, last_name], name: "unique_first_last_name")
+  @@map("users")
+}
+
+model Team {
+  id             String @id @default(uuid())
+  team_leader    User   @relation("TeamLeader", fields: [team_leader_id], references: [id], onDelete: Cascade)
+  team_leader_id String @unique
+  name           String @unique
+  status         Int
+
+  // Define a one-to-many relationship with TeamMembers
+  teamMembers TeamMember[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("teams")
+}
+
+model TeamMember {
+  id        String @id @default(uuid())
+  team      Team   @relation(fields: [team_id], references: [id], onDelete: Cascade)
+  team_id   String
+  member    User   @relation(fields: [member_id], references: [id], onDelete: Cascade)
+  member_id String @unique // set to unique since a 1 member = 1 team
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("team_members")
+}
+
+model UserSkill {
+  id                String        @id @default(uuid())
+  user              User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id           String
+  TrainingSkill     TrainingSkill @relation(fields: [training_skill_id], references: [id], onDelete: Cascade)
+  training_skill_id String
+
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @updatedAt
+  SkillCertificate SkillCertificate[]
+
+  @@unique([user_id, training_skill_id], name: "unique_user_skill")
+  @@map("user_skills")
+}
+
+model SkillCertificate {
+  id             String    @id @default(uuid())
+  userSkill      UserSkill @relation(fields: [user_skill_id], references: [id], onDelete: Cascade)
+  user_skill_id  String
+  certificateUrl String // You can store the URL or information about the certificate
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("skill_certificates")
 }

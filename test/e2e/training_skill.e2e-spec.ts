@@ -4,6 +4,10 @@ import * as request from 'supertest';
 import { PrismaService } from '../../src/prisma/prisma.service';
 import { AppModule } from '../../src/app.module';
 
+
+const apiEndpoint = '/api/v1/training-skill'
+const label = 'training skill'
+
 describe('TrainingSkillController (e2e)', () => {
   let app: INestApplication;
   let prismaService: PrismaService;
@@ -16,6 +20,7 @@ describe('TrainingSkillController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     prismaService = app.get(PrismaService);
     await app.init();
+
   });
 
   afterEach(async () => {
@@ -27,59 +32,59 @@ describe('TrainingSkillController (e2e)', () => {
     await app.close();
   });
 
-  describe('POST /api/v1/training-skill', () => {
-    it('should create a new training skill', async () => {
+  describe(`POST ${apiEndpoint}`, () => {
+    it(`should return 201 for creating a new ${label}`, async () => {
 
-      const createSkillDto = {
-        name: 'New Skill',
-        description: 'Description of New Skill',
+      const createDto = {
+        name: 'New ' + label,
+        description: 'Description of New ' + label,
       };
 
       const response = await request(app.getHttpServer())
-        .post('/api/v1/training-skill')
-        .send(createSkillDto)
+        .post(apiEndpoint)
+        .send(createDto)
         .expect(201);
 
-        expect(response.body.name).toBe(createSkillDto.name);
-        expect(response.body.description).toBe(createSkillDto.description);
+        expect(response.body.name).toBe(createDto.name);
+        expect(response.body.description).toBe(createDto.description);
     });
 
     it('should return 409 for duplicate data (Unique Constraint Violation)', async () => {
       // ... (existing test case for unique constraint violation)
 
       // Create a training skill with the same name as an existing one
-      const existingSkill = await request(app.getHttpServer())
-        .post('/api/v1/training-skill')
-        .send({ name: 'Duplicate Skill', description: 'Description of Duplicate Skill' });
+      const existing = await request(app.getHttpServer())
+        .post(apiEndpoint)
+        .send({ name: 'Duplicate ' + label, description: 'Description of Duplicate ' + label });
 
       await request(app.getHttpServer())
-        .post('/api/v1/training-skill')
-        .send({ name: 'Duplicate Skill', description: 'Duplicate Description' })
+        .post(apiEndpoint)
+        .send({ name: 'Duplicate ' + label, description: 'Duplicate Description' })
         .expect(409);
     });
 
     it('should return 400 for missing name (Input Validation)', async () => {
       // Attempt to create a training skill without a name
       await request(app.getHttpServer())
-        .post('/api/v1/training-skill')
+        .post(apiEndpoint)
         .send({ description: 'Description without a name' })
         .expect(400);
     });
 
   });
 
-  describe('PATCH /api/v1/training-skill/:id', () => {
-    it('should update a training skill', async () => {
+  describe(`PATCH ${apiEndpoint}/:id`, () => {
+    it('should return 200 for updating a ' + label, async () => {
       const createResponse = await request(app.getHttpServer())
-        .post('/api/v1/training-skill')
-        .send({ name: 'Skill 3', description: 'Description of Skill 3' });
+        .post(apiEndpoint)
+        .send({ name: label + ' 3', description: `Description of ${label} 3` });
 
-      const skillId = createResponse.body.id;
+      const id = createResponse.body.id;
 
-      const updateData = { name: 'Updated Skill', description: 'Updated Description' };
+      const updateData = { name: 'Updated ' + label, description: 'Updated Description' };
 
       const response = await request(app.getHttpServer())
-        .patch(`/api/v1/training-skill/${skillId}`)
+        .patch(`${apiEndpoint}/${id}`)
         .send(updateData)
         .expect(200);
 
@@ -87,114 +92,130 @@ describe('TrainingSkillController (e2e)', () => {
         expect(response.body.description).toBe(updateData.description);
     });
 
-    it('should not update a training skill for duplicate data (Unique Constraint Violation)', async () => {
-      // Create a new skill
-      const createSkillDto = {
-        name: 'Original Skill',
-        description: 'Description of Original Skill',
+    it(`should return 409 for not update a ${label} for duplicate data (Unique Constraint Violation)`, async () => {
+      const createDto = {
+        name: 'Original ' + label,
+        description: 'Description of Original ' + label,
       };
   
       const originalResponse = await request(app.getHttpServer())
-        .post('/api/v1/training-skill')
-        .send(createSkillDto)
+        .post(apiEndpoint)
+        .send(createDto)
         .expect(201);
   
-      // Create another skill with a different name
-      const duplicateSkillDto = {
-        name: 'Duplicate Skill',
-        description: 'Description of Duplicate Skill',
+      const duplicateDto = {
+        name: 'Duplicate ' + label,
+        description: 'Description of Duplicate ' + label,
       };
   
       const duplicateResponse = await request(app.getHttpServer())
-        .post('/api/v1/training-skill')
-        .send(duplicateSkillDto)
+        .post(apiEndpoint)
+        .send(duplicateDto)
         .expect(201);
   
-      // Attempt to update the original skill with the name of the duplicate skill
       const updateData = {
-        name: duplicateSkillDto.name, // Same name as an existing skill
+        name: duplicateDto.name, 
         description: 'Updated Description',
       };
   
       await request(app.getHttpServer())
-        .patch(`/api/v1/training-skill/${originalResponse.body.id}`)
+        .patch(`${apiEndpoint}/${originalResponse.body.id}`)
         .send(updateData)
         .expect(409);
     });
 
-    it('should return 404 for updating a non-existent training skill', async () => {
+    it('should return 404 for updating a non-existent ' + label, async () => {
       const nonExistentId = 'nonexistentid';
-      const updateData = { name: 'Updated Skill', description: 'Updated Description' };
+      const updateData = { name: 'Updated ' + label, description: 'Updated Description' };
 
       await request(app.getHttpServer())
-        .patch(`/api/v1/training-skill/${nonExistentId}`)
+        .patch(`${apiEndpoint}/${nonExistentId}`)
         .send(updateData)
         .expect(404);
     });
+
+    it('should return 400 for invalid request payload (Input Validation)', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .post(apiEndpoint)
+        .send({ name: label + ' 5', description: 'Valid Description' });
+    
+      const id = createResponse.body.id;
+    
+      // Send an invalid request payload with an empty name
+      const invalidUpdateData = {
+        name: '', // Empty name, which violates the validation criteria
+        description: 'Updated Description',
+      };
+    
+      await request(app.getHttpServer())
+        .patch(`${apiEndpoint}/${id}`)
+        .send(invalidUpdateData)
+        .expect(400);
+    });
   });
 
-  describe('GET /api/v1/training-skill', () => {
-    it('should retrieve all training skills', async () => {
+  describe(`GET ${apiEndpoint}`, () => {
+    it('should return 200 for retrieving all ' + label, async () => {
       await request(app.getHttpServer())
-        .post('/api/v1/training-skill')
-        .send({ name: 'Skill 1', description: 'Description of Skill 1' });
+        .post(apiEndpoint)
+        .send({ name: label + ' 1', description: `Description of ${label} 1` });
 
       const response = await request(app.getHttpServer())
-        .get('/api/v1/training-skill')
+        .get(apiEndpoint)
         .expect(200);
 
       expect(response.body).toHaveLength(1);
-      expect(response.body[0].name).toBe('Skill 1');
+      expect(response.body[0].name).toBe(label + ' 1');
     });
   });
 
-  describe('GET /api/v1/training-skill/:id', () => {
-    it('should retrieve a specific training skill', async () => {
+  describe(`GET ${apiEndpoint}/:id`, () => {
+    it('should return 200 for retrieving a specific ' + label, async () => {
       const createResponse = await request(app.getHttpServer())
-        .post('/api/v1/training-skill')
-        .send({ name: 'Skill 2', description: 'Description of Skill 2' });
+        .post(apiEndpoint)
+        .send({ name: label + ' 2', description: `Description of ${label} 2` });
 
-      const skillId = createResponse.body.id;
+      const id = createResponse.body.id;
 
       const response = await request(app.getHttpServer())
-        .get(`/api/v1/training-skill/${skillId}`)
+        .get(`${apiEndpoint}/${id}`)
         .expect(200);
 
-      expect(response.body.name).toBe('Skill 2');
+      expect(response.body.name).toBe(label + ' 2');
     });
 
-    it('should return 404 for a non-existent training skill', async () => {
+    it('should return 404 for a non-existent ' + label, async () => {
       const nonExistentId = 'nonexistentid';
 
       await request(app.getHttpServer())
-        .get(`/api/v1/training-skill/${nonExistentId}`)
+        .get(`${apiEndpoint}/${nonExistentId}`)
         .expect(404);
     });
   });
 
-  describe('DELETE /api/v1/training-skill/:id', () => {
-    it('should delete a training skill', async () => {
+  describe(`DELETE ${apiEndpoint}/:id`, () => {
+    it('should delete a ' + label, async () => {
       const createResponse = await request(app.getHttpServer())
-        .post('/api/v1/training-skill')
-        .send({ name: 'Skill 4', description: 'Description of Skill 4' });
+        .post(apiEndpoint)
+        .send({ name: label + ' 4', description: `Description of ${label} 4` });
 
       const skillId = createResponse.body.id;
 
       await request(app.getHttpServer())
-        .delete(`/api/v1/training-skill/${skillId}`)
+        .delete(`${apiEndpoint}/${skillId}`)
         .expect(204);
 
       // Verify that the skill has been deleted
       await request(app.getHttpServer())
-        .get(`/api/v1/training-skill/${skillId}`)
+        .get(`${apiEndpoint}/${skillId}`)
         .expect(404);
     });
 
-    it('should return 404 for deleting a non-existent training skill', async () => {
+    it('should return 404 for deleting a non-existent ' + label, async () => {
       const nonExistentId = 'nonexistentid';
 
       await request(app.getHttpServer())
-        .delete(`/api/v1/training-skill/${nonExistentId}`)
+        .delete(`${apiEndpoint}/${nonExistentId}`)
         .expect(404);
     });
   });
