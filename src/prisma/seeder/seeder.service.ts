@@ -237,18 +237,22 @@ export class SeederService {
         let nas = this.nas
 
         if(csos.length === 0){
+            console.log('empty csos')
             csos = await this.seedCsoTbl()
         }
 
         if(pos.length === 0){
+            console.log('empty pos')
             pos = await this.seedPoTbl()
         }
 
         if(barts.length === 0){
+            console.log('empty barts')
             barts = await this.seedBartTbl()
         }
 
         if(nas.length === 0){
+            console.log('empty nas')
             nas = await this.seedNaTbl()
         }
 
@@ -310,6 +314,13 @@ export class SeederService {
 
         await this.prisma.team.deleteMany({})
 
+        let users = this.users 
+
+        if(users.length === 0){
+            console.log('empty users')
+            users = await this.seedUserTbl()
+        }
+
         const seedData: Team[] = []
 
         for(let i of mockData.teams){
@@ -318,13 +329,7 @@ export class SeederService {
             data.name = i 
             data.status = TeamStatusEnum.ACTIVE
             
-            if(this.users.length > 0){
-                data.team_leader_id = this.users[Math.floor(Math.random() * this.users.length)].id
-            }else{
-                const users = await this.seedUserTbl()
-                const indx = Math.floor(Math.random() * users.length);
-                data.team_leader_id = users[indx].id
-            }
+            data.team_leader_id = users[Math.floor(Math.random() * users.length)].id
 
             data.created_at = new Date()
             data.updated_at = new Date()
