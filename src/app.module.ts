@@ -12,6 +12,7 @@ import { NaModule } from './na/na.module';
 import { UserModule } from './user/user.module';
 import { SharedModule } from './shared/shared.module';
 import { SeederModule } from './prisma/seeder/seeder.module';
+import { TeamModule } from './team/team.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { SeederModule } from './prisma/seeder/seeder.module';
     UserModule, 
     SharedModule,
     SeederModule,
+    TeamModule,
   ],
   controllers: [AppController],
   providers: [

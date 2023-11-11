@@ -5,6 +5,7 @@ import { IsValidUserSkillDtoArray } from '../validators/IsValidUserSkillDtoArray
 import { Transform } from 'class-transformer';
 
 export class CreateUserDto {
+    @IsNotEmpty()
     @IsEnum(UserLevelEnum)
     user_level: UserLevelEnum;
 
@@ -18,6 +19,7 @@ export class CreateUserDto {
     @IsString()
     first_name: string;
         
+    @IsNotEmpty()
     @IsEnum(GenderEnum)
     gender: GenderEnum;
     
@@ -39,6 +41,7 @@ export class CreateUserDto {
     @IsString()
     blood_type: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
 
+    @IsNotEmpty()
     @IsEnum(UserStatusEnum)
     status: UserStatusEnum;
 
