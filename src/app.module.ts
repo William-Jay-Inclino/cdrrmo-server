@@ -14,10 +14,16 @@ import { SharedModule } from './shared/shared.module';
 import { SeederModule } from './prisma/seeder/seeder.module';
 import { TeamModule } from './team/team.module';
 
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'client'),
     }),
     PrismaModule, 
     TrainingSkillModule, 

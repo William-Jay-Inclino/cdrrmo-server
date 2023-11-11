@@ -1,0 +1,1 @@
+import{a0 as c,O as n,P as t,i as a,j as g}from"./index-6bbaaed9.js";class i{getAllEmergencies(){return console.log("getAllEmergencies()"),c?n.emergencies:[]}}const l=new i,u=t("emergency",()=>{const e=a([]),r=s=>{e.value=s};return{emergencies:g(()=>e.value),setEmergencies:r}});export{u as a,l as e};

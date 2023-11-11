@@ -1,0 +1,1 @@
+import{P as A,i as o,j as r,O as B}from"./index-6bbaaed9.js";const l=A("BART",()=>{const s=o([]),e=t=>{s.value=t};return{BARTs:r(()=>s.value),setBARTs:e,getBARTs:()=>T.getAllBARTs()}});class R{getAllBARTs(){return console.log("getAllBARTs()"),B.barts}}const T=new R;export{T as B,l as a};
