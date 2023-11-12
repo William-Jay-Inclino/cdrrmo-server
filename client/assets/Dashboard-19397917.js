@@ -1,0 +1,1 @@
+import{_ as s,c as t,o as c,a as e}from"./index-8288363f.js";const a={},o={class:"container-fluid"},n=e("div",{class:"d-sm-flex align-items-center justify-content-between mb-4"},[e("h1",{class:"h3 mb-0 text-gray-800"},"Dashboard")],-1),r=[n];function _(d,i){return c(),t("div",o,r)}const f=s(a,[["render",_]]);export{f as default};

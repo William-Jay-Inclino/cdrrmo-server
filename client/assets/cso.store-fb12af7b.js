@@ -1,1 +1,0 @@
-import{O as S,P as o,i as r,j as C}from"./index-6bbaaed9.js";class O{getAllCSOs(){return console.log("getAllCSOs()"),S.csos}}const c=new O,g=o("CSO",()=>{const s=r([]),e=t=>{s.value=t};return{CSOs:C(()=>s.value),setCSOs:e,getCSOs:()=>c.getAllCSOs()}});export{c as C,g as a};

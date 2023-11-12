@@ -1,1 +1,0 @@
-import{O as o,P as A,i as n,j as a}from"./index-6bbaaed9.js";class r{getAllNAs(){return console.log("getAllNAs()"),o.nas}}const N=new r,i=A("NA",()=>{const s=n([]),e=t=>{s.value=t};return{NAs:a(()=>s.value),setNAs:e,getNAs:()=>N.getAllNAs()}});export{N,i as a};

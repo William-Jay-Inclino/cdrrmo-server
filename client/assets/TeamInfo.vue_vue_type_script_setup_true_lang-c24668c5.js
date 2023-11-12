@@ -1,0 +1,1 @@
+import{d as t,c as a,j as o,a as e,o as s}from"./index-8288363f.js";const n={class:"card shadow mb-4"},c=e("div",{class:"card-header py-3 d-flex flex-row align-items-center justify-content-between text-bg-primary"},[e("h6",{class:"m-0 font-weight-bold"},"Team Info")],-1),i=t({__name:"TeamInfo",setup(r){return(d,m)=>(s(),a("div",n,[c,o("",!0)]))}});export{i as _};

@@ -5,6 +5,12 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+
+  app.enableCors({
+    origin: 'http://localhost:5173/'
+  });
+
+  
   /*
     If whitelist is set to true, unknown properties will be removed before validation, 
     which may result in missing validation errors for the properties that are not defined in your DTO class
