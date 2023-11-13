@@ -337,6 +337,8 @@ export class SeederService {
             seedData.push(data)
         }
 
+        // console.log('seedData', seedData)
+
         await this.prisma.team.createMany({
             data: seedData,
         });

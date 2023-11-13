@@ -40,6 +40,8 @@ export class TrainingSkillService {
   }
 
   async update(id: string, updateTrainingSkillDto: UpdateTrainingSkillDto): Promise<TrainingSkill> {
+    console.log('TrainingSkillService: update()')
+    console.log('id', id)
     const existingSkill = await this.findOne(id);
   
     // Check if a skill with the same name already exists

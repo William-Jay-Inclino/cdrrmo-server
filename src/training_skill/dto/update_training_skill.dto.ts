@@ -10,6 +10,5 @@ export class UpdateTrainingSkillDto extends PartialType(CreateTrainingSkillDto) 
   
     @IsString()
     @IsOptional()
-    @Length(1, 255) 
     description?: string;
 }

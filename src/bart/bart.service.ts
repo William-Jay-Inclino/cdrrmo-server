@@ -10,6 +10,7 @@ export class BartService {
 
   async create(createBartDto: CreateBartDto) {
     try {
+      console.log('create success')
       return await this.prisma.bart.create({
         data: { ...createBartDto },
       });
@@ -35,6 +36,8 @@ export class BartService {
       throw new NotFoundException('BART not found.');
     }
 
+    console.log('find success')
+
     return bart;
   }
 
@@ -57,6 +60,8 @@ export class BartService {
       where: { id },
       data: { ...updateBartDto },
     });
+
+    console.log('update success')
   
     return updatedBart;
   }
@@ -67,6 +72,8 @@ export class BartService {
     await this.prisma.bart.delete({
       where: { id },
     });
+
+    console.log('remove success')
   
     return true;
   }
