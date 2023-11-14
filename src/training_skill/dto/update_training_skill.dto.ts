@@ -5,7 +5,6 @@ import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
 export class UpdateTrainingSkillDto extends PartialType(CreateTrainingSkillDto) {
     @IsString()
     @IsNotEmpty()
-    @Length(1, 255) 
     name: string;
   
     @IsString()

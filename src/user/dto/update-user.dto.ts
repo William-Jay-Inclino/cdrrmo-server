@@ -9,12 +9,10 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     @IsEnum(UserLevelEnum)
     user_level: UserLevelEnum;
 
-    @Length(1, 255) 
     @IsNotEmpty()
     @IsString()
     last_name: string;
 
-    @Length(1, 255) 
     @IsNotEmpty()
     @IsString()
     first_name: string;
@@ -22,7 +20,6 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     @IsEnum(GenderEnum)
     gender: GenderEnum;
     
-    @Length(1, 255) 
     @IsNotEmpty()
     @IsString()
     address: string;
@@ -30,7 +27,6 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     @IsDate()
     birth_date: Date;
 
-    @Length(1, 255) 
     @IsNotEmpty()
     @IsString()
     contact_no: string;
