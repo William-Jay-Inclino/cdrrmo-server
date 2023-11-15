@@ -27,6 +27,8 @@ export class UserService {
 				throw new NotFoundException('One or more training_skill_id values do not exist.');
 			}
 
+			delete userData.password // delete password prop since it's not included in user schema
+
 			// use transaction so that if 1 transaction fails it will rollback
 
 			const result = await this.prisma.$transaction(async (prismaClient) => {
@@ -34,11 +36,13 @@ export class UserService {
 				const data: Prisma.UserCreateInput = {
 				...userData,
 				// auto generate unique username base on first_name and last_name
-				user_name: this.generateUniqueUserName(userData.first_name, userData.last_name),
+				// user_name: this.generateUniqueUserName(userData.first_name, userData.last_name),
 				// auto generate password and hash it
 				// send username and password via sms or email?
-				password_hash: await this.hashPassword(faker.internet.password()),
+				password_hash: await this.hashPassword(createUserDto.password),
 				};
+
+				console.log('data', data)
 		
 				const user = await prismaClient.user.create({ data });
 				
@@ -55,13 +59,18 @@ export class UserService {
 					await prismaClient.userSkill.createMany({ data: userSkills });
 				}
 				
-				// remove password_hash in returning newly added user 
-				delete user.password_hash
+				
 				return user;
 			});
 	
 		  	// Transaction was successful
-		  	return result;
+		  	// return result;
+
+			const addedUser = await this.findOne(result.id)
+			// remove password_hash in returning newly added user 
+			delete addedUser.password_hash 
+			return addedUser
+
 		} catch (error) {
 			console.error('Error:', error);
 		
