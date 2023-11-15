@@ -14,6 +14,7 @@ export class UserController {
 	}
 
 	@Post('/check-username')
+	@HttpCode(200)
 	async checkUsername(@Body('user_name') user_name: string): Promise<{ taken: boolean }> {
 
 		console.log('checkUsername()', user_name)
