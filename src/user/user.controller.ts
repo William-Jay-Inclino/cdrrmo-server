@@ -13,6 +13,15 @@ export class UserController {
 		await this.userService.truncate();
 	}
 
+	@Post('/check-username')
+	async checkUsername(@Body('user_name') user_name: string): Promise<{ taken: boolean }> {
+
+		console.log('checkUsername()', user_name)
+	  	const isUsernameTaken = await this.userService.isUsernameTaken(user_name);
+  
+	  	return { taken: isUsernameTaken };
+	}
+
 	@Post()
 	@UsePipes(new ValidationPipe())
 	async create(@Body() createUserDto: CreateUserDto): Promise<User> {
@@ -45,4 +54,7 @@ export class UserController {
 	async remove(@Param('id') id: string): Promise<void> {
 		await this.userService.remove(id);
 	}
+
+
+
 }

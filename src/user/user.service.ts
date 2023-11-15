@@ -196,6 +196,14 @@ export class UserService {
 		return user;
 	}
 
+	async isUsernameTaken(user_name: string): Promise<boolean> {
+		const user = await this.prisma.user.findUnique({
+		  where: { user_name },
+		});
+	
+		return !!user; 
+	}
+
 	async remove(id: string) {
 		const existingUser = await this.findOne(id);
 	  
