@@ -84,7 +84,7 @@ export class UserService {
 
 	// I use the remove and add (Replace) approach for updating the user skills 
 	async update(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
-		console.log('userId', userId)
+		console.log('update()', updateUserDto)
 		try {
 			const { skills, ...updatedUserData } = updateUserDto;
 	
@@ -143,14 +143,17 @@ export class UserService {
 					data: userDataToUpdate,
 				});
 	
-				// Remove sensitive fields from the returning updated user
-				delete updatedUser.password_hash;
-	
 				return updatedUser;
 			});
 	
 			// Transaction was successful
-			return result;
+			// return result;
+
+			const updatedUser = await this.findOne(result.id)
+			// remove password_hash in returning newly added user 
+			delete updatedUser.password_hash 
+			return updatedUser
+
 		} catch (error) {
 			console.error('Error:', error);
 	
@@ -163,21 +166,33 @@ export class UserService {
 	}
 
 	async findAll() {
-		return await this.prisma.user.findMany({
-		include: {
-			Bart: true, 
-			Cso: true,  
-			Po: true,  
-			Na: true,  
-			teamMembers: true, 
-			teamLeader: true,  
-			skills: {
-				include: {
-					TrainingSkill: true,
-				}
-			}     
-		}
+		const users = await this.prisma.user.findMany({
+			include: {
+				Bart: true, 
+				Cso: true,  
+				Po: true,  
+				Na: true,  
+				teamMembers: true, 
+				teamLeader: true,  
+				skills: {
+					include: {
+						TrainingSkill: true,
+					}
+				}     
+			}
 		});
+
+		const usersWithoutPassword = users.map(user => {
+
+			return {
+				...user,
+				['password_hash']: ''
+			}
+		});
+
+		console.log('usersWithoutPassword', usersWithoutPassword)
+
+		return usersWithoutPassword
 	}
 
 	async findOne(id: string): Promise<User>{
@@ -201,7 +216,8 @@ export class UserService {
 		if (!user) {
 		  throw new NotFoundException('User not found.');
 		}
-	
+		
+		delete user.password_hash
 		return user;
 	}
 
@@ -239,7 +255,6 @@ export class UserService {
 	}
 
 	private async validateTrainingSkillsExist(skillIds: string[]): Promise<boolean> {
-		console.log('skillIds', skillIds)
 		const existingSkills = await this.prisma.trainingSkill.findMany({
 		  where: {
 			id: {
@@ -248,7 +263,6 @@ export class UserService {
 		  },
 		});
 
-		console.log('existingSkills', existingSkills)
 	  
 		return existingSkills.length === skillIds.length;
 	}
