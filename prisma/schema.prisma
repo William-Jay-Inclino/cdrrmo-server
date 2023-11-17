@@ -151,8 +151,9 @@ model User {
   teamLeader  Team?        @relation("TeamLeader")
   skills      UserSkill[]
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
+  emergencyContacts EmergencyContact[]
 
   @@unique([first_name, last_name], name: "unique_first_last_name")
   @@map("users")
@@ -212,4 +213,19 @@ model SkillCertificate {
   updated_at DateTime @updatedAt
 
   @@map("skill_certificates")
+}
+
+model EmergencyContact {
+  id           String @id @default(uuid())
+  user         User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id      String
+  name         String
+  relationship String
+  mobile       String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([user_id, mobile], name: "UserMobileUnique")
+  @@map("emergency_contacts")
 }

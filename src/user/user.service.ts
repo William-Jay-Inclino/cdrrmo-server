@@ -1,23 +1,19 @@
 import { Injectable, NotFoundException, ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { Prisma, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { faker } from '@faker-js/faker';
+import { EmergencyContactDto, CreateUserDto, UpdateUserDto } from './dto';
 
 @Injectable()
 export class UserService {
 	constructor(private readonly prisma: PrismaService) {}
 
 
-	// this will auto generate a user name and password
 	// password is hash using bcrypt
-	// send user name and password via email and/or sms ?
 	async create(createUserDto: CreateUserDto): Promise<User> {
 		try {
 
-			const { skills, ...userData } = createUserDto;
+			const { skills, emergencyContacts, ...userData } = createUserDto;
 
 			// validate if skills exist in training_skills table
 			const skillIds = skills.map((skill) => skill.training_skill_id);
@@ -32,14 +28,22 @@ export class UserService {
 			// use transaction so that if 1 transaction fails it will rollback
 
 			const result = await this.prisma.$transaction(async (prismaClient) => {
+
+				// Transform emergencyContacts to the Prisma nested input structure
+				const emergencyContactsInput: Prisma.EmergencyContactCreateNestedManyWithoutUserInput = {
+					create: emergencyContacts.map((emergencyContact: EmergencyContactDto) => {
+					  return {
+						name: emergencyContact.name,
+						relationship: emergencyContact.relationship,
+						mobile: emergencyContact.mobile,
+					  };
+					}),
+				};
 				
 				const data: Prisma.UserCreateInput = {
 				...userData,
-				// auto generate unique username base on first_name and last_name
-				// user_name: this.generateUniqueUserName(userData.first_name, userData.last_name),
-				// auto generate password and hash it
-				// send username and password via sms or email?
 				password_hash: await this.hashPassword(createUserDto.password),
+				emergencyContacts: emergencyContactsInput,
 				};
 
 				console.log('data', data)
@@ -51,8 +55,8 @@ export class UserService {
 
 					const userSkills: Prisma.UserSkillCreateManyInput[] = skills.map((skill) => {
 						return {
-						user_id: user.id,
-						training_skill_id: skill.training_skill_id,
+							user_id: user.id,
+							training_skill_id: skill.training_skill_id,
 						};
 					});
 			
@@ -62,9 +66,6 @@ export class UserService {
 				
 				return user;
 			});
-	
-		  	// Transaction was successful
-		  	// return result;
 
 			const addedUser = await this.findOne(result.id)
 			// remove password_hash in returning newly added user 
@@ -86,7 +87,7 @@ export class UserService {
 	async update(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
 		console.log('update()', updateUserDto)
 		try {
-			const { skills, ...updatedUserData } = updateUserDto;
+			const { skills, emergencyContacts, ...updatedUserData } = updateUserDto;
 	
 			// Check if the user with the provided userId exists
 			const existingUser = await this.prisma.user.findUnique({
@@ -133,6 +134,29 @@ export class UserService {
 					});
 	
 					await prismaClient.userSkill.createMany({ data: userSkillsToCreate });
+				}
+
+				// Remove all existing emergency contacts for the user
+				await prismaClient.emergencyContact.deleteMany({
+					where: {
+					  user_id: userId,
+					},
+				});
+
+				// Add the new emergencyContacts to the emergency_contacts table
+				if (emergencyContacts && emergencyContacts.length > 0) {
+					const emergencyContactsToCreate: Prisma.EmergencyContactCreateManyInput[] = emergencyContacts.map(
+					  (emergencyContact: EmergencyContactDto) => {
+						return {
+						  user_id: userId,
+						  name: emergencyContact.name,
+						  relationship: emergencyContact.relationship,
+						  mobile: emergencyContact.mobile,
+						};
+					  }
+					);
+			
+					await prismaClient.emergencyContact.createMany({ data: emergencyContactsToCreate });
 				}
 	
 				// Update the user in the database

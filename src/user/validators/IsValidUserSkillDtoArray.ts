@@ -1,5 +1,4 @@
 import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
-import { UserSkillDto } from '../dto';
 
 @ValidatorConstraint({ name: 'IsValidUserSkillDtoArray', async: false })
 export class IsValidUserSkillDtoArray implements ValidatorConstraintInterface {

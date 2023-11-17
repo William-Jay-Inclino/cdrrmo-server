@@ -1,9 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateUserDto } from './create-user.dto';
+import { CreateUserDto, UserSkillDto, EmergencyContactDto } from '.';
 import { UserLevelEnum, GenderEnum, UserStatusEnum, DispatchStatusEnum, UserTypeEnum } from '../../shared/entities';
-import { IsEnum, Length, IsNotEmpty, IsString, IsDate, IsOptional, IsArray, Validate } from 'class-validator';
-import { IsValidUserSkillDtoArray } from '../validators/IsValidUserSkillDtoArray';
-import { UserSkillDto } from './user-skill.dto';
+import { IsEnum, IsNotEmpty, IsString, IsDate, IsOptional, IsArray, Validate } from 'class-validator';
+import { IsValidUserSkillDtoArray, IsValidEmergencyContactDtoArray } from '../validators';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
     @IsEnum(UserLevelEnum)
@@ -63,4 +62,8 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     @IsArray()
     @Validate(IsValidUserSkillDtoArray)
     skills: UserSkillDto[];
+
+    @IsArray()
+    @Validate(IsValidEmergencyContactDtoArray)
+    emergencyContacts: EmergencyContactDto[];
 }

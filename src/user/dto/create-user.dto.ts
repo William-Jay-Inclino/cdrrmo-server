@@ -1,8 +1,8 @@
 import { DispatchStatusEnum, GenderEnum, UserLevelEnum, UserStatusEnum, UserTypeEnum } from '../../shared/entities';
 import { IsEnum, IsString, IsDate, IsOptional, IsNotEmpty, Length, IsArray, Validate } from 'class-validator';
-import { UserSkillDto } from './user-skill.dto'
-import { IsValidUserSkillDtoArray } from '../validators/IsValidUserSkillDtoArray';
+import { IsValidUserSkillDtoArray, IsValidEmergencyContactDtoArray } from '../validators';
 import { Transform } from 'class-transformer';
+import { EmergencyContactDto, UserSkillDto } from '.';
 
 export class CreateUserDto {
     @IsNotEmpty()
@@ -76,5 +76,9 @@ export class CreateUserDto {
     @IsArray()
     @Validate(IsValidUserSkillDtoArray)
     skills: UserSkillDto[];
+
+    @IsArray()
+    @Validate(IsValidEmergencyContactDtoArray)
+    emergencyContacts: EmergencyContactDto[];
 
 }
