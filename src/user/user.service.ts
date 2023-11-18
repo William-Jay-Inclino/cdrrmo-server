@@ -198,6 +198,7 @@ export class UserService {
 				Na: true,  
 				teamMembers: true, 
 				teamLeader: true,  
+				emergencyContacts: true,
 				skills: {
 					include: {
 						TrainingSkill: true,
@@ -229,6 +230,7 @@ export class UserService {
 				Na: true,  
 				teamMembers: true, 
 				teamLeader: true,  
+				emergencyContacts: true,
 				skills: {
 					include: {
 						TrainingSkill: true,
