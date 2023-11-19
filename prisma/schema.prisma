@@ -10,52 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// enum GenderEnum {
-//   MALE
-//   FEMALE
-// }
-
-// enum UserStatusEnum {
-//   ACTIVE
-//   INACTIVE
-// }
-
-// enum DispatchStatusEnum {
-//   QUEUE
-//   DISPATCHED
-//   DECK
-// }
-
-// enum UserLevelEnum {
-//   ADMIN
-//   DISPATCHER
-//   TEAM_LEADER
-//   FIELD_OPERATOR
-// }
-
-// enum UserTypeEnum {
-//   LGU_Regular
-//   LGU_Casual
-//   LGU_Job_Order
-//   ACDV_CSO
-//   ACDV_PO
-//   ACDV_BART
-//   ACDV_INDIVIDUAL
-//   National_Agency
-// }
-
-// enum TeamStatusEnum {
-//   ACTIVE
-//   DISPATCHED
-// }
-
-// enum SkillProficiencyEnum {
-//   BASIC
-//   INTERMEDIATE
-//   ADVANCED
-//   EXPERT
-// }
-
 model TrainingSkill {
   id          String  @id @default(uuid())
   name        String  @unique

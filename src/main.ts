@@ -1,10 +1,18 @@
+import { config } from 'dotenv';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 
+try {
+  config();
+} catch (error) {
+  console.error('Error loading .env file');
+  console.error(error);
+  process.exit(1);
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
 
   app.enableCors({
     origin: ['http://localhost:5173', 'http://cdrrmo-client:5173'],
@@ -12,17 +20,15 @@ async function bootstrap() {
     credentials: true,
   });
 
-  
-  /*
-    If whitelist is set to true, unknown properties will be removed before validation, 
-    which may result in missing validation errors for the properties that are not defined in your DTO class
-  */
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, 
+      whitelist: true,
     }),
   );
 
-  await app.listen(3000);
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
+  console.log(`Server is running on http://localhost:${port}`);
 }
+
 bootstrap();
